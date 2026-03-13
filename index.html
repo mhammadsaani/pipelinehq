@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PipelineHQ — Learn DevOps. Ship Faster.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0d12;
+      --bg2:       #0f1318;
+      --bg3:       #141920;
+      --border:    #1e2530;
+      --border2:   #2a3340;
+      --text:      #e2e8f0;
+      --muted:     #64748b;
+      --accent:    #22d3ee;
+      --accent2:   #0ea5e9;
+      --green:     #4ade80;
+      --orange:    #fb923c;
+      --purple:    #a78bfa;
+      --red:       #f87171;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-sans: 'Syne', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ───── SCROLLBAR ───── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+    /* ───── NAV ───── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5vw;
+      height: 64px;
+      background: rgba(10,13,18,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-family: var(--font-sans); font-weight: 800; font-size: 1.15rem;
+      text-decoration: none; color: var(--text); letter-spacing: -0.5px;
+    }
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;
+      color: #000; flex-shrink: 0;
+    }
+
+    .nav-links {
+      display: flex; gap: 32px; list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted); text-decoration: none;
+      font-size: 0.88rem; font-weight: 600; letter-spacing: 0.3px;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .btn-ghost {
+      background: none; border: 1px solid var(--border2);
+      color: var(--muted); padding: 7px 18px; border-radius: 6px;
+      font-family: var(--font-mono); font-size: 0.78rem; font-weight: 500;
+      cursor: pointer; transition: all 0.2s; text-decoration: none;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    .btn-primary {
+      background: var(--accent); color: #000;
+      border: none; padding: 8px 20px; border-radius: 6px;
+      font-family: var(--font-mono); font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; text-decoration: none;
+      letter-spacing: 0.3px;
+    }
+    .btn-primary:hover { background: #67e8f9; transform: translateY(-1px); }
+
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: 0.3s; }
+
+    /* ───── HERO ───── */
+    #hero {
+      min-height: 100vh;
+      padding: 110px 5vw 80px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid-bg {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, #000 30%, transparent 100%);
+      opacity: 0.35;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(34,211,238,0.08) 0%, transparent 70%);
+      top: -100px; left: -100px;
+      pointer-events: none;
+    }
+
+    .hero-left { position: relative; z-index: 1; }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(34,211,238,0.08); border: 1px solid rgba(34,211,238,0.25);
+      border-radius: 100px; padding: 5px 14px;
+      font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent);
+      font-weight: 500; margin-bottom: 24px;
+    }
+    .hero-badge::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green); animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(74,222,128,0.4); }
+      50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(74,222,128,0); }
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -1.5px;
+      margin-bottom: 22px;
+      color: #fff;
+    }
+    h1 span { color: var(--accent); }
+    h1 em { font-style: normal; color: var(--green); }
+
+    .hero-sub {
+      font-size: 1.05rem; color: var(--muted); max-width: 480px;
+      line-height: 1.7; margin-bottom: 36px; font-weight: 400;
+      font-family: var(--font-mono);
+    }
+
+    .hero-actions {
+      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .btn-large {
+      background: var(--accent); color: #000;
+      border: none; padding: 14px 28px; border-radius: 8px;
+      font-family: var(--font-mono); font-size: 0.88rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-large:hover { background: #67e8f9; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(34,211,238,0.3); }
+    .btn-large-ghost {
+      background: none; border: 1px solid var(--border2);
+      color: var(--text); padding: 14px 28px; border-radius: 8px;
+      font-family: var(--font-mono); font-size: 0.88rem; font-weight: 500;
+      cursor: pointer; transition: all 0.2s; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-large-ghost:hover { border-color: var(--muted); }
+
+    .hero-stats {
+      display: flex; gap: 32px; margin-top: 48px; flex-wrap: wrap;
+    }
+    .stat { display: flex; flex-direction: column; }
+    .stat-num { font-size: 1.6rem; font-weight: 800; color: #fff; letter-spacing: -1px; }
+    .stat-label { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); }
+
+    /* ───── TERMINAL CARD ───── */
+    .hero-right { position: relative; z-index: 1; }
+
+    .terminal {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+    }
+    .terminal-bar {
+      background: var(--bg3);
+      padding: 12px 16px;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-red { background: #f87171; }
+    .dot-yellow { background: #fbbf24; }
+    .dot-green { background: #4ade80; }
+    .terminal-title {
+      flex: 1; text-align: center;
+      font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted);
+    }
+    .terminal-body {
+      padding: 20px 20px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.8;
+      min-height: 320px;
+    }
+    .t-line { display: flex; gap: 10px; }
+    .t-prompt { color: var(--green); flex-shrink: 0; }
+    .t-cmd { color: var(--text); }
+    .t-out { color: var(--muted); padding-left: 0; }
+    .t-success { color: var(--green); }
+    .t-info { color: var(--accent); }
+    .t-warn { color: var(--orange); }
+    .cursor {
+      display: inline-block; width: 8px; height: 14px;
+      background: var(--accent); animation: blink 1.1s step-end infinite;
+      vertical-align: middle;
+    }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+    .lab-badge {
+      margin-top: 16px;
+      background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.2);
+      border-radius: 8px; padding: 10px 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .lab-badge-icon { color: var(--green); font-size: 1rem; }
+    .lab-badge-text { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); }
+    .lab-badge-text strong { color: var(--green); }
+
+    /* ───── SECTION COMMONS ───── */
+    section { padding: 96px 5vw; }
+    .section-tag {
+      font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent);
+      font-weight: 500; letter-spacing: 1px; text-transform: uppercase;
+      margin-bottom: 12px; display: block;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 3vw, 2.8rem); font-weight: 800;
+      letter-spacing: -1px; color: #fff; line-height: 1.15;
+    }
+    .section-sub {
+      font-family: var(--font-mono); font-size: 0.9rem; color: var(--muted);
+      max-width: 520px; line-height: 1.7; margin-top: 12px;
+    }
+
+    /* ───── TRUST BAR ───── */
+    #trust {
+      padding: 32px 5vw;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+    }
+    .trust-inner {
+      display: flex; align-items: center; gap: 40px; flex-wrap: wrap;
+      justify-content: center;
+    }
+    .trust-label {
+      font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted);
+      white-space: nowrap;
+    }
+    .trust-logos {
+      display: flex; gap: 32px; flex-wrap: wrap; align-items: center;
+    }
+    .trust-logo {
+      font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600;
+      color: var(--muted); opacity: 0.5; letter-spacing: 0.5px;
+      transition: opacity 0.2s;
+    }
+    .trust-logo:hover { opacity: 0.9; }
+
+    /* ───── COURSES ───── */
+    #courses { background: var(--bg); }
+    .courses-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 48px; flex-wrap: wrap; gap: 20px;
+    }
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .course-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .course-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--card-accent, var(--accent)), transparent);
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .course-card:hover {
+      border-color: var(--card-accent, var(--accent));
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+    .course-card:hover::before { opacity: 1; }
+
+    .course-card.docker  { --card-accent: #2496ed; }
+    .course-card.linux   { --card-accent: #f97316; }
+    .course-card.network { --card-accent: #a78bfa; }
+    .course-card.aws     { --card-accent: #f59e0b; }
+    .course-card.k8s     { --card-accent: #326ce5; }
+
+    .course-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: 16px;
+      background: rgba(255,255,255,0.05);
+    }
+    .course-title {
+      font-size: 1.05rem; font-weight: 700; color: #fff;
+      margin-bottom: 8px; letter-spacing: -0.3px;
+    }
+    .course-desc {
+      font-family: var(--font-mono); font-size: 0.77rem; color: var(--muted);
+      line-height: 1.7; margin-bottom: 20px;
+    }
+    .course-meta {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 8px;
+    }
+    .course-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag {
+      font-family: var(--font-mono); font-size: 0.68rem; font-weight: 500;
+      padding: 3px 8px; border-radius: 4px;
+      background: rgba(255,255,255,0.05); color: var(--muted);
+    }
+    .course-level {
+      font-family: var(--font-mono); font-size: 0.68rem;
+      color: var(--card-accent, var(--accent));
+    }
+
+    /* ───── LABS ───── */
+    #labs {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .labs-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+    }
+    .labs-features { margin-top: 32px; display: flex; flex-direction: column; gap: 20px; }
+    .lab-feature {
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .lab-feature-icon {
+      width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+      background: rgba(34,211,238,0.08); border: 1px solid rgba(34,211,238,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+    }
+    .lab-feature-text h4 { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .lab-feature-text p { font-family: var(--font-mono); font-size: 0.77rem; color: var(--muted); line-height: 1.6; }
+
+    .lab-preview {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .lab-preview-header {
+      background: var(--bg3); border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .lab-preview-tabs {
+      display: flex; gap: 2px;
+    }
+    .lab-tab {
+      padding: 4px 12px; border-radius: 4px;
+      font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted);
+      cursor: pointer;
+    }
+    .lab-tab.active { background: var(--border2); color: var(--text); }
+    .lab-preview-body { padding: 20px; }
+
+    .lab-task {
+      background: rgba(34,211,238,0.05); border: 1px solid rgba(34,211,238,0.15);
+      border-radius: 8px; padding: 14px 16px; margin-bottom: 16px;
+    }
+    .lab-task-title { font-size: 0.82rem; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+    .lab-task-desc { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); }
+
+    .lab-terminal-mini {
+      background: #000; border-radius: 6px; padding: 12px 14px;
+      font-family: var(--font-mono); font-size: 0.76rem; line-height: 1.8;
+    }
+    .progress-bar {
+      height: 3px; background: var(--border); border-radius: 2px; margin-top: 16px;
+    }
+    .progress-fill {
+      height: 100%; width: 65%; background: linear-gradient(90deg, var(--accent), var(--green));
+      border-radius: 2px;
+    }
+    .progress-label {
+      font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* ───── HOW IT WORKS ───── */
+    #how { background: var(--bg); }
+    .steps {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2px; margin-top: 48px;
+      border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    }
+    .step {
+      background: var(--bg2); padding: 32px 28px;
+      border-right: 1px solid var(--border);
+      position: relative; transition: background 0.2s;
+    }
+    .step:last-child { border-right: none; }
+    .step:hover { background: var(--bg3); }
+    .step-num {
+      font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent);
+      margin-bottom: 16px; opacity: 0.8;
+    }
+    .step-icon { font-size: 1.8rem; margin-bottom: 14px; }
+    .step-title { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .step-desc { font-family: var(--font-mono); font-size: 0.77rem; color: var(--muted); line-height: 1.65; }
+
+    /* ───── PATHS ───── */
+    #paths { background: var(--bg2); border-top: 1px solid var(--border); }
+    .paths-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px; margin-top: 48px;
+    }
+    .path-card {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 12px;
+      padding: 28px; transition: border-color 0.2s, transform 0.2s;
+    }
+    .path-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+    .path-badge {
+      display: inline-block; font-family: var(--font-mono); font-size: 0.68rem;
+      padding: 3px 9px; border-radius: 4px; font-weight: 600;
+      margin-bottom: 14px;
+    }
+    .path-badge.beginner { background: rgba(74,222,128,0.1); color: var(--green); }
+    .path-badge.intermediate { background: rgba(251,146,60,0.1); color: var(--orange); }
+    .path-badge.advanced { background: rgba(167,139,250,0.1); color: var(--purple); }
+    .path-title { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 10px; }
+    .path-desc { font-family: var(--font-mono); font-size: 0.77rem; color: var(--muted); line-height: 1.65; margin-bottom: 18px; }
+    .path-modules {
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .path-mod {
+      font-family: var(--font-mono); font-size: 0.68rem;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      border-radius: 4px; padding: 3px 8px; color: var(--muted);
+    }
+    .path-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border);
+    }
+    .path-info { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); }
+    .path-arrow {
+      color: var(--accent); font-size: 0.9rem; transition: transform 0.2s;
+    }
+    .path-card:hover .path-arrow { transform: translateX(4px); }
+
+    /* ───── TESTIMONIALS ───── */
+    #testimonials { background: var(--bg); }
+    .t-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px; margin-top: 48px;
+    }
+    .t-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+      padding: 24px; transition: border-color 0.2s;
+    }
+    .t-card:hover { border-color: var(--border2); }
+    .t-quote {
+      font-family: var(--font-mono); font-size: 0.82rem; color: var(--text);
+      line-height: 1.75; margin-bottom: 20px;
+    }
+    .t-quote::before { content: '"'; color: var(--accent); font-size: 1.2rem; }
+    .t-author { display: flex; align-items: center; gap: 12px; }
+    .t-avatar {
+      width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.8rem; font-family: var(--font-mono);
+    }
+    .t-name { font-size: 0.88rem; font-weight: 700; color: #fff; }
+    .t-role { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); }
+    .t-stars { color: #fbbf24; font-size: 0.8rem; margin-bottom: 14px; letter-spacing: 1px; }
+
+    /* ───── PRICING ───── */
+    #pricing { background: var(--bg2); border-top: 1px solid var(--border); }
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px; max-width: 900px; margin: 48px auto 0;
+    }
+    .price-card {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 12px;
+      padding: 32px; transition: border-color 0.2s, transform 0.2s;
+    }
+    .price-card.featured {
+      border-color: var(--accent);
+      background: linear-gradient(180deg, rgba(34,211,238,0.04) 0%, var(--bg) 50%);
+      transform: scale(1.02);
+    }
+    .price-card:hover:not(.featured) { border-color: var(--border2); transform: translateY(-2px); }
+    .featured-badge {
+      font-family: var(--font-mono); font-size: 0.68rem; color: #000;
+      background: var(--accent); border-radius: 4px; padding: 2px 8px;
+      font-weight: 700; display: inline-block; margin-bottom: 14px;
+    }
+    .price-plan { font-size: 0.82rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .price-amount { font-size: 2.4rem; font-weight: 800; color: #fff; letter-spacing: -1.5px; }
+    .price-amount span { font-size: 1rem; color: var(--muted); font-weight: 400; }
+    .price-desc { font-family: var(--font-mono); font-size: 0.77rem; color: var(--muted); margin: 12px 0 24px; line-height: 1.6; }
+    .price-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+    .price-features li {
+      font-family: var(--font-mono); font-size: 0.78rem; color: var(--text);
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .price-features li::before { content: '✓'; color: var(--green); flex-shrink: 0; }
+    .price-features li.no::before { content: '✕'; color: var(--muted); }
+    .price-features li.no { color: var(--muted); }
+    .btn-plan {
+      width: 100%; padding: 12px; border-radius: 8px; cursor: pointer;
+      font-family: var(--font-mono); font-size: 0.82rem; font-weight: 600;
+      transition: all 0.2s; border: none;
+    }
+    .btn-plan-outline {
+      background: none; border: 1px solid var(--border2); color: var(--text);
+    }
+    .btn-plan-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-plan-filled {
+      background: var(--accent); color: #000;
+    }
+    .btn-plan-filled:hover { background: #67e8f9; }
+
+    /* ───── CTA ───── */
+    #cta {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 96px 5vw;
+    }
+    .cta-box {
+      max-width: 680px; margin: 0 auto;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 16px; padding: 56px 48px;
+      position: relative; overflow: hidden;
+    }
+    .cta-glow {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 70% at 50% 0%, rgba(34,211,238,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-box h2 {
+      font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800;
+      color: #fff; letter-spacing: -1px; margin-bottom: 16px;
+    }
+    .cta-box p {
+      font-family: var(--font-mono); font-size: 0.88rem;
+      color: var(--muted); line-height: 1.7; margin-bottom: 32px;
+    }
+    .cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* ───── FOOTER ───── */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 48px 5vw 32px;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px; margin-bottom: 40px;
+    }
+    .footer-brand p {
+      font-family: var(--font-mono); font-size: 0.77rem; color: var(--muted);
+      line-height: 1.7; margin-top: 12px; max-width: 260px;
+    }
+    .footer-col h5 {
+      font-size: 0.82rem; font-weight: 700; color: var(--text);
+      margin-bottom: 16px; letter-spacing: 0.3px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a {
+      font-family: var(--font-mono); font-size: 0.77rem;
+      color: var(--muted); text-decoration: none; transition: color 0.2s;
+    }
+    .footer-col a:hover { color: var(--text); }
+    .footer-bottom {
+      padding-top: 28px; border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-bottom p { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); }
+
+    /* ───── MOBILE NAV ───── */
+    .mobile-menu {
+      display: none; position: fixed; top: 64px; left: 0; right: 0; z-index: 99;
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      padding: 20px 5vw;
+      flex-direction: column; gap: 16px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: var(--font-mono); font-size: 0.88rem; color: var(--muted);
+      text-decoration: none;
+    }
+
+    /* ───── ANIMATIONS ───── */
+    .fade-up {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* ───── RESPONSIVE ───── */
+    @media (max-width: 1024px) {
+      .labs-inner { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      #hero { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .pricing-grid { grid-template-columns: 1fr; }
+      .price-card.featured { transform: none; }
+      .steps { grid-template-columns: 1fr; }
+      .step { border-right: none; border-bottom: 1px solid var(--border); }
+      .step:last-child { border-bottom: none; }
+      .cta-box { padding: 36px 24px; }
+    }
+
+    @media (max-width: 480px) {
+      .footer-grid { grid-template-columns: 1fr; }
+      .trust-logos { gap: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">
+    <div class="logo-icon">&gt;_</div>
+    PipelineHQ
+  </a>
+  <ul class="nav-links">
+    <li><a href="#courses">Courses</a></li>
+    <li><a href="#labs">Labs</a></li>
+    <li><a href="#paths">Learning Paths</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="#" class="btn-ghost">Sign in</a>
+    <a href="#" class="btn-primary">Start Free →</a>
+  </div>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#courses">Courses</a>
+  <a href="#labs">Labs</a>
+  <a href="#paths">Learning Paths</a>
+  <a href="#pricing">Pricing</a>
+  <a href="#" class="btn-primary" style="text-align:center">Start Free →</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-left">
+    <div class="hero-badge">Live Platform · 4,200+ Engineers Enrolled</div>
+    <h1>Master DevOps.<br><span>Build</span> it.<br><em>Ship it.</em></h1>
+    <p class="hero-sub">
+      Structured courses + real browser-based labs.<br />
+      Docker, Linux, Networking, AWS, Kubernetes — no setup required.
+    </p>
+    <div class="hero-actions">
+      <a href="#" class="btn-large">Start for Free →</a>
+      <a href="#labs" class="btn-large-ghost">▶ &nbsp;See Labs</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-num">60+</span>
+        <span class="stat-label">// hands-on labs</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">5</span>
+        <span class="stat-label">// core tracks</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">4.9★</span>
+        <span class="stat-label">// avg rating</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <div class="terminal-title">lab-environment — bash — 80×24</div>
+      </div>
+      <div class="terminal-body">
+        <div class="t-line"><span class="t-prompt">student@pipelinehq:~$</span></div>
+        <div class="t-line"><span class="t-prompt">~$</span><span class="t-cmd">&nbsp;kubectl get pods -n production</span></div>
+        <div class="t-line"><span class="t-out">NAME &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; READY &nbsp; STATUS</span></div>
+        <div class="t-line"><span class="t-out">web-deployment-7d4b9 &nbsp;&nbsp; 1/1 &nbsp;&nbsp;&nbsp; </span><span class="t-success">Running</span></div>
+        <div class="t-line"><span class="t-out">api-deployment-2c3f1 &nbsp;&nbsp; 1/1 &nbsp;&nbsp;&nbsp; </span><span class="t-success">Running</span></div>
+        <div class="t-line"><span class="t-out">db-statefulset-0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1/1 &nbsp;&nbsp;&nbsp; </span><span class="t-success">Running</span></div>
+        <div class="t-line">&nbsp;</div>
+        <div class="t-line"><span class="t-prompt">~$</span><span class="t-cmd">&nbsp;docker build -t myapp:v2 .</span></div>
+        <div class="t-line"><span class="t-info">[+] Building 3.2s (8/8) FINISHED</span></div>
+        <div class="t-line"><span class="t-out"> =&gt; [base] load build definition</span></div>
+        <div class="t-line"><span class="t-out"> =&gt; [1/3] FROM node:20-alpine</span></div>
+        <div class="t-line"><span class="t-success"> =&gt; exporting to image ✓</span></div>
+        <div class="t-line">&nbsp;</div>
+        <div class="t-line"><span class="t-prompt">~$</span><span class="t-cmd">&nbsp;aws s3 ls s3://my-bucket</span></div>
+        <div class="t-line"><span class="t-warn">2024-11-14 &nbsp;10:23:01 &nbsp; &nbsp; &nbsp; 4096 deploy.yaml</span></div>
+        <div class="t-line"><span class="t-prompt">~$</span><span class="t-cmd">&nbsp;</span><span class="cursor"></span></div>
+      </div>
+    </div>
+    <div class="lab-badge">
+      <span class="lab-badge-icon">⚡</span>
+      <span class="lab-badge-text"><strong>Lab ready in 3 seconds</strong> — real environment, zero install</span>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div id="trust">
+  <div class="trust-inner">
+    <span class="trust-label">// trusted by engineers at</span>
+    <div class="trust-logos">
+      <span class="trust-logo">AMAZON</span>
+      <span class="trust-logo">MICROSOFT</span>
+      <span class="trust-logo">CLOUDFLARE</span>
+      <span class="trust-logo">HASHICORP</span>
+      <span class="trust-logo">GITLAB</span>
+      <span class="trust-logo">STRIPE</span>
+    </div>
+  </div>
+</div>
+
+<!-- COURSES -->
+<section id="courses">
+  <div class="courses-header fade-up">
+    <div>
+      <span class="section-tag">// courses</span>
+      <h2 class="section-title">Everything you need<br />to work in DevOps</h2>
+      <p class="section-sub">Structured learning with real-world scenarios. Each course ships with matching lab exercises.</p>
+    </div>
+    <a href="#" class="btn-ghost">View all courses →</a>
+  </div>
+  <div class="courses-grid">
+    <div class="course-card docker fade-up">
+      <div class="course-icon">🐳</div>
+      <div class="course-title">Docker Mastery</div>
+      <div class="course-desc">Build, ship, and run containers. From Dockerfile basics to multi-stage builds and Docker Compose orchestration.</div>
+      <div class="course-meta">
+        <div class="course-tags">
+          <span class="tag">Containers</span>
+          <span class="tag">CI/CD</span>
+        </div>
+        <span class="course-level">Beginner → Pro</span>
+      </div>
+    </div>
+    <div class="course-card linux fade-up">
+      <div class="course-icon">🐧</div>
+      <div class="course-title">Linux for DevOps</div>
+      <div class="course-desc">Shell scripting, file systems, permissions, process management, systemd, and networking essentials.</div>
+      <div class="course-meta">
+        <div class="course-tags">
+          <span class="tag">Shell</span>
+          <span class="tag">Scripting</span>
+        </div>
+        <span class="course-level">Beginner</span>
+      </div>
+    </div>
+    <div class="course-card network fade-up">
+      <div class="course-icon">🌐</div>
+      <div class="course-title">Networking Deep Dive</div>
+      <div class="course-desc">TCP/IP, DNS, HTTP, firewalls, VPNs, load balancers, and cloud networking patterns explained hands-on.</div>
+      <div class="course-meta">
+        <div class="course-tags">
+          <span class="tag">TCP/IP</span>
+          <span class="tag">DNS</span>
+        </div>
+        <span class="course-level">Intermediate</span>
+      </div>
+    </div>
+    <div class="course-card aws fade-up">
+      <div class="course-icon">☁️</div>
+      <div class="course-title">AWS for Engineers</div>
+      <div class="course-desc">EC2, S3, IAM, VPC, RDS, Lambda, ECS. Infrastructure-as-Code with Terraform and CloudFormation.</div>
+      <div class="course-meta">
+        <div class="course-tags">
+          <span class="tag">Cloud</span>
+          <span class="tag">IaC</span>
+        </div>
+        <span class="course-level">Intermediate</span>
+      </div>
+    </div>
+    <div class="course-card k8s fade-up">
+      <div class="course-icon">⎈</div>
+      <div class="course-title">Kubernetes in Production</div>
+      <div class="course-desc">Deploy, scale, and manage containerised workloads. Helm, RBAC, Ingress, monitoring and CKA prep.</div>
+      <div class="course-meta">
+        <div class="course-tags">
+          <span class="tag">K8s</span>
+          <span class="tag">Helm</span>
+          <span class="tag">CKA</span>
+        </div>
+        <span class="course-level">Advanced</span>
+      </div>
+    </div>
+    <div class="course-card fade-up" style="--card-accent: #4ade80; background: rgba(74,222,128,0.03); display:flex; flex-direction:column; justify-content:center; align-items:flex-start; border-style: dashed;">
+      <div class="course-icon" style="font-size:1.5rem">🚀</div>
+      <div class="course-title" style="color:var(--muted)">More coming soon</div>
+      <div class="course-desc">Terraform, CI/CD Pipelines, Prometheus & Grafana, Ansible, and GitOps workflows.</div>
+      <a href="#" style="color:var(--green); font-family:var(--font-mono); font-size:0.78rem; margin-top:8px; text-decoration:none;">Get notified →</a>
+    </div>
+  </div>
+</section>
+
+<!-- LABS -->
+<section id="labs">
+  <div class="labs-inner">
+    <div class="fade-up">
+      <span class="section-tag">// practice labs</span>
+      <h2 class="section-title">Learn by doing,<br />not just reading</h2>
+      <p class="section-sub">Every concept is backed by a live lab. Real Linux machines, real Kubernetes clusters — in your browser. No setup. No drama.</p>
+      <div class="labs-features">
+        <div class="lab-feature">
+          <div class="lab-feature-icon">⚡</div>
+          <div class="lab-feature-text">
+            <h4>Instant environments</h4>
+            <p>Lab spins up in under 5 seconds. Isolated, clean, reproducible — every time.</p>
+          </div>
+        </div>
+        <div class="lab-feature">
+          <div class="lab-feature-icon">🎯</div>
+          <div class="lab-feature-text">
+            <h4>Guided challenges</h4>
+            <p>Step-by-step tasks with automated validation. Know immediately if you got it right.</p>
+          </div>
+        </div>
+        <div class="lab-feature">
+          <div class="lab-feature-icon">🔄</div>
+          <div class="lab-feature-text">
+            <h4>Reset anytime</h4>
+            <p>Broke something? Start fresh in one click. Experiment without consequences.</p>
+          </div>
+        </div>
+        <div class="lab-feature">
+          <div class="lab-feature-icon">📊</div>
+          <div class="lab-feature-text">
+            <h4>Progress tracking</h4>
+            <p>Track completion, time spent, and score across every lab and course.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lab-preview fade-up">
+      <div class="lab-preview-header">
+        <div class="lab-preview-tabs">
+          <div class="lab-tab active">Lab</div>
+          <div class="lab-tab">Instructions</div>
+          <div class="lab-tab">Hints</div>
+        </div>
+      </div>
+      <div class="lab-preview-body">
+        <div class="lab-task">
+          <div class="lab-task-title">Task 3/5 — Deploy a containerised app</div>
+          <div class="lab-task-desc">Create a Kubernetes Deployment with 3 replicas using the nginx:alpine image and expose it via a ClusterIP Service.</div>
+        </div>
+        <div class="lab-terminal-mini">
+          <div class="t-line"><span class="t-prompt">~$</span><span class="t-cmd">&nbsp;kubectl apply -f deployment.yaml</span></div>
+          <div class="t-line"><span class="t-success">deployment.apps/nginx-app created</span></div>
+          <div class="t-line"><span class="t-prompt">~$</span><span class="t-cmd">&nbsp;kubectl get pods</span></div>
+          <div class="t-line"><span class="t-out">nginx-app-7f9d &nbsp; 1/1 &nbsp; Running &nbsp; 0 &nbsp; 4s</span></div>
+          <div class="t-line"><span class="t-out">nginx-app-3b2c &nbsp; 1/1 &nbsp; Running &nbsp; 0 &nbsp; 4s</span></div>
+          <div class="t-line"><span class="t-out">nginx-app-9e1a &nbsp; 1/1 &nbsp; Running &nbsp; 0 &nbsp; 4s</span></div>
+          <div class="t-line"><span class="t-prompt">~$</span><span class="cursor"></span></div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+        <div class="progress-label">3 of 5 tasks complete — 65%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div style="text-align:center; max-width:560px; margin: 0 auto 0;" class="fade-up">
+    <span class="section-tag">// how it works</span>
+    <h2 class="section-title">From zero to production-ready</h2>
+    <p class="section-sub" style="margin:12px auto 0;">A proven path used by 4,200+ engineers worldwide.</p>
+  </div>
+  <div class="steps">
+    <div class="step fade-up">
+      <div class="step-num">01 //</div>
+      <div class="step-icon">📖</div>
+      <div class="step-title">Pick a track</div>
+      <div class="step-desc">Choose a topic — Docker, Linux, Kubernetes — or follow a curated career path from beginner to advanced.</div>
+    </div>
+    <div class="step fade-up">
+      <div class="step-num">02 //</div>
+      <div class="step-icon">▶️</div>
+      <div class="step-title">Watch & read</div>
+      <div class="step-desc">Concise video lessons and written references. No fluff, no filler. Every lesson ships with a matching lab.</div>
+    </div>
+    <div class="step fade-up">
+      <div class="step-num">03 //</div>
+      <div class="step-icon">⚡</div>
+      <div class="step-title">Launch your lab</div>
+      <div class="step-desc">A real environment spins up in your browser. Run commands, break things, learn by doing.</div>
+    </div>
+    <div class="step fade-up">
+      <div class="step-num">04 //</div>
+      <div class="step-icon">🏆</div>
+      <div class="step-title">Earn & ship</div>
+      <div class="step-desc">Complete tracks, earn badges, and build a public profile that proves your skills to employers.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PATHS -->
+<section id="paths">
+  <div class="fade-up">
+    <span class="section-tag">// learning paths</span>
+    <h2 class="section-title">Structured journeys,<br />real outcomes</h2>
+    <p class="section-sub">Not sure where to start? Follow a curated path matched to your experience level.</p>
+  </div>
+  <div class="paths-grid">
+    <div class="path-card fade-up">
+      <span class="path-badge beginner">Beginner</span>
+      <div class="path-title">DevOps Foundations</div>
+      <div class="path-desc">Perfect for developers or sysadmins making the jump to DevOps. Build strong fundamentals across all core areas.</div>
+      <div class="path-modules">
+        <span class="path-mod">Linux Basics</span>
+        <span class="path-mod">Git</span>
+        <span class="path-mod">Bash</span>
+        <span class="path-mod">Networking</span>
+        <span class="path-mod">Docker Intro</span>
+      </div>
+      <div class="path-footer">
+        <span class="path-info">24 lessons · 18 labs · ~40hrs</span>
+        <span class="path-arrow">→</span>
+      </div>
+    </div>
+    <div class="path-card fade-up">
+      <span class="path-badge intermediate">Intermediate</span>
+      <div class="path-title">Cloud & Containers</div>
+      <div class="path-desc">Take your containerisation skills to production. Deploy real applications on AWS using Docker and ECS.</div>
+      <div class="path-modules">
+        <span class="path-mod">Docker Advanced</span>
+        <span class="path-mod">AWS Core</span>
+        <span class="path-mod">VPC & IAM</span>
+        <span class="path-mod">Terraform</span>
+      </div>
+      <div class="path-footer">
+        <span class="path-info">30 lessons · 22 labs · ~55hrs</span>
+        <span class="path-arrow">→</span>
+      </div>
+    </div>
+    <div class="path-card fade-up">
+      <span class="path-badge advanced">Advanced</span>
+      <div class="path-title">Kubernetes Engineer</div>
+      <div class="path-desc">Go deep on Kubernetes. Covers everything you need to pass CKA and run K8s clusters confidently in production.</div>
+      <div class="path-modules">
+        <span class="path-mod">K8s Architecture</span>
+        <span class="path-mod">Helm</span>
+        <span class="path-mod">RBAC</span>
+        <span class="path-mod">Ingress</span>
+        <span class="path-mod">Monitoring</span>
+        <span class="path-mod">CKA Prep</span>
+      </div>
+      <div class="path-footer">
+        <span class="path-info">36 lessons · 28 labs · ~70hrs</span>
+        <span class="path-arrow">→</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div style="text-align:center; max-width:540px; margin:0 auto;" class="fade-up">
+    <span class="section-tag">// testimonials</span>
+    <h2 class="section-title">Trusted by engineers<br />who ship</h2>
+  </div>
+  <div class="t-grid">
+    <div class="t-card fade-up">
+      <div class="t-stars">★★★★★</div>
+      <div class="t-quote">The labs are what sold me. I had a real K8s cluster to break and fix within seconds. Went from confused to CKA-certified in 10 weeks.</div>
+      <div class="t-author">
+        <div class="t-avatar" style="background:rgba(34,211,238,0.15); color:var(--accent);">JS</div>
+        <div>
+          <div class="t-name">Jamie S.</div>
+          <div class="t-role">SRE @ Cloudflare</div>
+        </div>
+      </div>
+    </div>
+    <div class="t-card fade-up">
+      <div class="t-stars">★★★★★</div>
+      <div class="t-quote">Finally, a platform that doesn't make me set up a VM just to learn Docker. The terminal in the browser is legitimately good.</div>
+      <div class="t-author">
+        <div class="t-avatar" style="background:rgba(74,222,128,0.15); color:var(--green);">MK</div>
+        <div>
+          <div class="t-name">Mira K.</div>
+          <div class="t-role">Backend Dev → DevOps Engineer</div>
+        </div>
+      </div>
+    </div>
+    <div class="t-card fade-up">
+      <div class="t-stars">★★★★★</div>
+      <div class="t-quote">I've tried Udemy, Pluralsight, and others. PipelineHQ is the only one where I felt I was actually practising, not just watching.</div>
+      <div class="t-author">
+        <div class="t-avatar" style="background:rgba(251,146,60,0.15); color:var(--orange);">RA</div>
+        <div>
+          <div class="t-name">Rajan A.</div>
+          <div class="t-role">Platform Eng @ Stripe</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div style="text-align:center;" class="fade-up">
+    <span class="section-tag">// pricing</span>
+    <h2 class="section-title">Simple, transparent pricing</h2>
+    <p class="section-sub" style="margin: 12px auto 0; text-align:center;">No hidden fees. Cancel anytime. Start free, no credit card required.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="price-card fade-up">
+      <div class="price-plan">Free</div>
+      <div class="price-amount">$0</div>
+      <div class="price-desc">Get started with core content and sample labs. No card needed.</div>
+      <ul class="price-features">
+        <li>5 free courses (intro modules)</li>
+        <li>10 lab credits / month</li>
+        <li>Community forum access</li>
+        <li class="no">Unlimited labs</li>
+        <li class="no">Certificates</li>
+        <li class="no">Learning paths</li>
+      </ul>
+      <button class="btn-plan btn-plan-outline">Get started free</button>
+    </div>
+    <div class="price-card featured fade-up">
+      <div class="featured-badge">MOST POPULAR</div>
+      <div class="price-plan">Pro</div>
+      <div class="price-amount">$29<span>/mo</span></div>
+      <div class="price-desc">Everything you need to go from fundamentals to production-ready.</div>
+      <ul class="price-features">
+        <li>All courses unlocked</li>
+        <li>Unlimited lab sessions</li>
+        <li>Guided learning paths</li>
+        <li>Completion certificates</li>
+        <li>Priority support</li>
+        <li>New content early access</li>
+      </ul>
+      <button class="btn-plan btn-plan-filled">Start 7-day free trial</button>
+    </div>
+    <div class="price-card fade-up">
+      <div class="price-plan">Teams</div>
+      <div class="price-amount">$19<span>/seat/mo</span></div>
+      <div class="price-desc">Onboard your team. Track progress, assign paths, manage licenses.</div>
+      <ul class="price-features">
+        <li>Everything in Pro</li>
+        <li>Admin dashboard</li>
+        <li>Team progress reports</li>
+        <li>Custom learning paths</li>
+        <li>SSO / SAML support</li>
+        <li>Dedicated account manager</li>
+      </ul>
+      <button class="btn-plan btn-plan-outline">Contact sales</button>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-box fade-up">
+    <div class="cta-glow"></div>
+    <h2>Ready to level up?</h2>
+    <p>Join 4,200+ engineers learning DevOps the practical way.<br/>No fluff. Real terminals. Real results.</p>
+    <div class="cta-actions">
+      <a href="#" class="btn-large">Start for Free →</a>
+      <a href="#courses" class="btn-large-ghost">Browse Courses</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="logo">
+        <div class="logo-icon">&gt;_</div>
+        PipelineHQ
+      </a>
+      <p>Practice-first DevOps learning. Real labs, real skills, real results. Used by engineers at leading tech companies worldwide.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Learn</h5>
+      <ul>
+        <li><a href="#">Docker</a></li>
+        <li><a href="#">Linux</a></li>
+        <li><a href="#">Networking</a></li>
+        <li><a href="#">AWS</a></li>
+        <li><a href="#">Kubernetes</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Platform</h5>
+      <ul>
+        <li><a href="#">Labs</a></li>
+        <li><a href="#">Learning Paths</a></li>
+        <li><a href="#">Certifications</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Teams</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Company</h5>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 PipelineHQ. All rights reserved.</p>
+    <p style="color:var(--muted)">Built for engineers, by engineers. 🚀</p>
+  </div>
+</footer>
+
+<script>
+  // Hamburger
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+  });
+
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Typewriter effect for hero terminal
+  const lines = [
+    { selector: '.t-prompt', delay: 0 },
+  ];
+
+  // Smooth active nav
+  const sections = document.querySelectorAll('section[id], div[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--text)' : '';
+    });
+  });
+</script>
+</body>
+</html>
